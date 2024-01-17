@@ -376,7 +376,115 @@ SELECT age, COUNT(*) as count FROM user GROUP BY age;
 +------+-------+
 5 rows in set (0.00 sec)
 ```
- 
+
+### 7-1
+- userとuser_infoのidが等しい条件での結合
+```sql
+SELECT user.id, user.name, user_info.phone, user_info.email FROM user INNER JOIN user_info ON user.id = user_info.user_id;
+```
+```sql
++----+-----------+-------------+------------------------+
+| id | name      | phone       | email                  |
++----+-----------+-------------+------------------------+
+|  1 | seiji     | 09011111111 | seiji@nextbeat.net     |
+|  2 | emiko     | 09022222222 | emiko@nextbeat.net     |
+|  3 | yoshinobu | 09033333333 | yoshinobu@nextbeat.net |
+|  4 | yoichi    | 09044444444 | yoichi@nextbeat.net    |
+|  5 | kazuya    | 08055555555 | kazuya@gmail.com       |
+|  6 | kaoru     | 08066666666 | kaoru@gmail.com        |
++----+-----------+-------------+------------------------+
+6 rows in set (0.00 sec)
+```
+
+### 8-1
+- user テーブルの全てのレコードに対して、genderを1に変更するクエリ
+```sql
+UPDATE user SET gender = 1;
+```
+```sql
+mysql> select * from user;
++----+-----------+------+--------+---------------------+---------------------+
+| id | name      | age  | gender | updated_at          | created_at          |
++----+-----------+------+--------+---------------------+---------------------+
+|  1 | seiji     |   15 |      1 | 2024-01-15 18:28:28 | 2024-01-15 18:28:28 |
+|  2 | emiko     | NULL |      1 | 2024-01-17 10:39:09 | 2024-01-15 18:37:12 |
+|  3 | yoshinobu |   22 |      1 | 2024-01-15 18:37:12 | 2024-01-15 18:37:12 |
+|  4 | yoichi    |   30 |      1 | 2024-01-15 18:37:12 | 2024-01-15 18:37:12 |
+|  5 | kazuya    |   18 |      1 | 2024-01-15 18:37:12 | 2024-01-15 18:37:12 |
+|  6 | kaoru     |   18 |      1 | 2024-01-17 10:39:09 | 2024-01-15 18:37:12 |
++----+-----------+------+--------+---------------------+---------------------+
+6 rows in set (0.00 sec)
+```
+
+### 8-2
+- user_info テーブルの user_id カラムの値が3のレコードに対して、phoneカラムの値を 09012345678 に変更するクエリ
+```sql
+UPDATE user_info SET phone = "09012345678" WHERE user_id = 3;
+```
+```sql
+mysql> select * from user_info;
++---------+------------------------+-------------+---------------------+---------------------+
+| user_id | email                  | phone       | updated_at          | created_at          |
++---------+------------------------+-------------+---------------------+---------------------+
+|       1 | seiji@nextbeat.net     | 09011111111 | 2024-01-15 18:32:18 | 2024-01-15 18:32:18 |
+|       2 | emiko@nextbeat.net     | 09022222222 | 2024-01-15 18:40:54 | 2024-01-15 18:40:54 |
+|       3 | yoshinobu@nextbeat.net | 09012345678 | 2024-01-17 10:41:34 | 2024-01-15 18:40:54 |
+|       4 | yoichi@nextbeat.net    | 09044444444 | 2024-01-15 18:40:54 | 2024-01-15 18:40:54 |
+|       5 | kazuya@gmail.com       | 08055555555 | 2024-01-15 18:40:54 | 2024-01-15 18:40:54 |
+|       6 | kaoru@gmail.com        | 08066666666 | 2024-01-15 18:40:54 | 2024-01-15 18:40:54 |
++---------+------------------------+-------------+---------------------+---------------------+
+6 rows in set (0.00 sec)
+```
+
+### 9-1
+- user テーブルに対して、レコードを全て削除するクエリ
+```sql
+DELETE FROM user;
+```
+```sql
+mysql> select * from user;
+Empty set (0.00 sec)
+```
+
+### 9-2
+- user_info テーブルに対して、phoneカラムの値が 09011111111 のレコードを削除するクエリ
+```sql
+DELETE FROM user_info WHERE phone = "09011111111";
+```
+```sql
+mysql> select * from user_info;
++---------+------------------------+-------------+---------------------+---------------------+
+| user_id | email                  | phone       | updated_at          | created_at          |
++---------+------------------------+-------------+---------------------+---------------------+
+|       2 | emiko@nextbeat.net     | 09022222222 | 2024-01-15 18:40:54 | 2024-01-15 18:40:54 |
+|       3 | yoshinobu@nextbeat.net | 09012345678 | 2024-01-17 10:41:34 | 2024-01-15 18:40:54 |
+|       4 | yoichi@nextbeat.net    | 09044444444 | 2024-01-15 18:40:54 | 2024-01-15 18:40:54 |
+|       5 | kazuya@gmail.com       | 08055555555 | 2024-01-15 18:40:54 | 2024-01-15 18:40:54 |
+|       6 | kaoru@gmail.com        | 08066666666 | 2024-01-15 18:40:54 | 2024-01-15 18:40:54 |
++---------+------------------------+-------------+---------------------+---------------------+
+5 rows in set (0.00 sec)
+```
+
+### 10-1
+- user_infoテーブルにprofileカラムを追加
+```sql
+ALTER TABLE user_info ADD COLUMN profile TEXT AFTER phone;
+```
+```sql
+mysql> show full columns from user_info;
++------------+--------------+--------------------+------+-----+-------------------+-----------------------------------------------+---------------------------------+---------+
+| Field      | Type         | Collation          | Null | Key | Default           | Extra                                         | Privileges                      | Comment |
++------------+--------------+--------------------+------+-----+-------------------+-----------------------------------------------+---------------------------------+---------+
+| user_id    | int unsigned | NULL               | NO   | PRI | NULL              |                                               | select,insert,update,references |         |
+| email      | varchar(255) | utf8mb4_0900_ai_ci | NO   | UNI | NULL              |                                               | select,insert,update,references |         |
+| phone      | varchar(16)  | utf8mb4_0900_ai_ci | NO   |     | NULL              |                                               | select,insert,update,references |         |
+| profile    | text         | utf8mb4_0900_ai_ci | YES  |     | NULL              |                                               | select,insert,update,references |         |
+| updated_at | timestamp    | NULL               | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP | select,insert,update,references |         |
+| created_at | timestamp    | NULL               | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             | select,insert,update,references |         |
++------------+--------------+--------------------+------+-----+-------------------+-----------------------------------------------+---------------------------------+---------+
+6 rows in set (0.00 sec)
+```
+
 ## 自分用メモ
 ### AUTO_INCREMENT
 - テーブルを作成するときにカラムにAUTO_INCREMENTをつけると、データを追加したときにカラムに対して現在格納されている最大の数値に1を追加した数値を自動で格納することができる
@@ -434,3 +542,28 @@ SELECT age, COUNT(*) as count FROM user GROUP BY age;
 
 ### GROUP BY
 - カラムの値ごとにグループ化
+
+### CROSS JOIN
+- 直積
+
+### INNER JOIN
+- 内部結合
+- ON句で結合条件
+
+### OUTER JOIN
+- 外部結合
+- on句の条件を満たさないものも含まれる
+    - ないところをnullとして出力される
+    - どこをベースにするかについて3通り
+        - LEFT OUTER JOIN
+        - RIGHT OUTER JOIN
+        - FULL OUTER JOIN
+
+
+### ALTER TABLE
+- テーブルの定義を変更
+- いろいろある
+    - https://cs.wingarc.com/manual/drsum/5.6/ja/UUID-526c9d49-68ec-9e2a-ec68-76b7e83fc839.html
+
+### ALTER TABLE (テーブル名) ADD COLUMN
+- カラム追加
